@@ -1,0 +1,9 @@
+numpy
+rasterio
+torch
+pytorch_lightning
+xarray
+tqdm
+pytest
+hypothesis
+pyproj
