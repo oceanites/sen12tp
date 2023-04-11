@@ -108,8 +108,6 @@ def load_patch(
     return image_data, bbox, crs, window_transform
 
 
-
-
 def get_tifs_in_roidir(roi_dir: Path, modalities: List[str] = None) -> Dict[str, Path]:
     """
     From a path to a ROI directory return a dictionary with the image paths for each modality.
@@ -159,7 +157,6 @@ def get_col_row_count(image_path: Path, stride: int) -> Tuple[int, int]:
     assert rows >= 1, ("Not at least one row", image_path, stride)
 
     return columns, rows
-
 
 
 def sample_dict_from_sample(
@@ -342,6 +339,7 @@ class SEN12TP(Dataset):
         xr.DataArray
             A dataArray containing a patch for each different modality out of original image
         """
+
         def _get_scene_id():
             """Get the scene id of a patch. Checks, that it is identical for all modalities."""
             scene_id_roi: Optional[int] = None
@@ -355,7 +353,9 @@ class SEN12TP(Dataset):
             return scene_id_roi
 
         band_names_dict = band_names_dict if band_names_dict else BandNames
-        assert all([isinstance(t, list) for t in band_names_dict.values()]), ("Wrong type, not list!")
+        assert all(
+            [isinstance(t, list) for t in band_names_dict.values()]
+        ), "Wrong type, not list!"
         imgs: Dict[str, np.ndarray] = dict()  # store the image array for each modality
         band_names_modalities: Dict[str, List[str]] = dict()
 

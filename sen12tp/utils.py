@@ -218,5 +218,3 @@ def min_max_transform(sample: xr.DataArray) -> xr.DataArray:
         sample.loc[modis_bands] = sample.loc[modis_bands] / 1000
 
     return sample
-
-

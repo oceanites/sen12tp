@@ -53,7 +53,7 @@ def dataset_fixture_dir() -> Path:
     Creates 20 ROIs with all modalities defined in sen12tp.dataset.BandNames.
     """
     dataset_fixture_dir = Path(__file__).parent / "fixtures" / "dataset"
-    #dataset_fixture_dir = Path(f"fixtures/dataset/")
+    # dataset_fixture_dir = Path(f"fixtures/dataset/")
     if not dataset_fixture_dir.is_dir():
         for mod_i, (modality, bandnames) in enumerate(sen12tp.utils.BandNames.items()):
             for roi_i in range(20):
@@ -70,7 +70,9 @@ def dataset_fixture_dir() -> Path:
                 data = data.reshape((channel_count, DATASET_IMG_SIZE, DATASET_IMG_SIZE))
                 # set the cloud mask channel
                 data[-1, :, :] = np.full(
-                    (DATASET_IMG_SIZE, DATASET_IMG_SIZE), fill_value=fill_value, dtype=np.int32
+                    (DATASET_IMG_SIZE, DATASET_IMG_SIZE),
+                    fill_value=fill_value,
+                    dtype=np.int32,
                 )
                 # data = np.full((channel_count, img_size, img_size), fill_value=fill_value, dtype=np.int32)
                 roi_dir = dataset_fixture_dir / f"{roi_i}/"
@@ -89,8 +91,10 @@ def dataset_fixture_dir() -> Path:
                     dst.write(data, list(range(1, channel_count + 1)))
     return dataset_fixture_dir
 
+
 def test_dir(dataset_fixture_dir):
     assert dataset_fixture_dir.is_dir()
+
 
 def test_load_patch():
     path = Path("fixtures/0_cgls.tif")
@@ -120,7 +124,9 @@ def test_sample_dict_from_sample(arr_s2):
     # def sample_dict_from_sample(sample: xr.DataArray, bands: List[str], indexes: List[str]) -> Dict[str, np.ndarray]:
     indexes = ["NDVI"]
     bands = ["B1", "B4"]
-    sample = sen12tp.dataset.sample_dict_from_sample(arr_s2, bands=bands, indexes=indexes)
+    sample = sen12tp.dataset.sample_dict_from_sample(
+        arr_s2, bands=bands, indexes=indexes
+    )
     assert "image" in sample
     assert "label" in sample
     assert sample["label"].shape == (len(indexes), SAMPLE_SIZE, SAMPLE_SIZE)
@@ -131,7 +137,9 @@ def test_sample_dict_from_sample_two_indixes(arr_s2):
     # def sample_dict_from_sample(sample: xr.DataArray, bands: List[str], indexes: List[str]) -> Dict[str, np.ndarray]:
     indexes = ["NDVI", "NDWI_11", "NDWI_12"]
     bands = ["B1", "B4"]
-    sample = sen12tp.dataset.sample_dict_from_sample(arr_s2, bands=bands, indexes=indexes)
+    sample = sen12tp.dataset.sample_dict_from_sample(
+        arr_s2, bands=bands, indexes=indexes
+    )
     assert "image" in sample
     assert "label" in sample
     assert sample["label"].shape == (len(indexes), SAMPLE_SIZE, SAMPLE_SIZE)
@@ -241,7 +249,9 @@ def test_FilteredSEN12TP_shuffling(dataset_fixture_dir):
     assert rois_unshuffled_str == sorted(rois_unshuffled_str)
 
 
-@pytest.mark.parametrize("index_name", [t.name for t in sen12tp.dataset.TrainingTargets])
+@pytest.mark.parametrize(
+    "index_name", [t.name for t in sen12tp.dataset.TrainingTargets]
+)
 def test_SEN12TP_single_index(dataset_fixture_dir, index_name):
     """Test to get the dataset with a single vegetation index as label."""
     used_bands = ["VV_sigma0", "VH_sigma0"]
@@ -257,7 +267,11 @@ def test_SEN12TP_single_index(dataset_fixture_dir, index_name):
         assert "image" in elem_dict
         assert "label" in elem_dict
         elem_label = elem_dict["label"]
-        assert elem_label.shape == (1, DATASET_IMG_SIZE, DATASET_IMG_SIZE), elem_label.shape
+        assert elem_label.shape == (
+            1,
+            DATASET_IMG_SIZE,
+            DATASET_IMG_SIZE,
+        ), elem_label.shape
         break
 
 
