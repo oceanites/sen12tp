@@ -24,6 +24,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         dataset_dir: str = "path/to/dir",
         batch_size: int = 32,
         patch_size: Patchsize = Patchsize(256, 256),
+        stride: int = 249,
         model_inputs: List[str] = None,
         model_targets: List[str] = None,
         transform=None,
@@ -38,6 +39,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         self.clipping_method = default_clipping_transform
         self.transform = transform
         self.patch_size = patch_size
+        self.stride = stride
         self.model_inputs = (
             model_inputs if model_inputs else ["VV_corrected", "VH_corrected"]
         )
@@ -57,6 +59,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
             "clip_transform": self.clipping_method,
             "model_inputs": self.model_inputs,
             "end_transform": self.end_transform,
+            "stride": self.stride,
         }
         sen12tp_train_ds = SEN12TP(self.dataset_dir / "train", **sen12tp_kwargs)
         sen12tp_val_ds = SEN12TP(self.dataset_dir / "val", **sen12tp_kwargs)

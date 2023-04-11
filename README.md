@@ -47,6 +47,7 @@ ds = SEN12TP("dataset_dir/train",
              patch_size=Patchsize(256, 256),
              transform=normalization_transform,
              clip_transform=clip_transform,
+             stride=256,
              )
 # access a sample: use integer index
 patch = ds[34]  # returns a dictionary
@@ -90,6 +91,7 @@ dm = SEN12TPDataModule(
     batch_size=24,
     max_workers=2,
     patch_size=Patchsize(256, 256),
+    stride=256,
     model_inputs=["VV_sigma0", "VH_sigma0"],
     model_targets=["NDVI"],
     transform=min_max_transform_with_bands,
