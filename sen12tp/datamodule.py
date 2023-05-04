@@ -15,7 +15,7 @@ from sen12tp.constants import (
     cgls_simplified_mapping,
 )
 from sen12tp.constants import BandNames
-from sen12tp import default_clipping_transform
+from sen12tp.utils import default_clipping_transform
 
 
 class SEN12TPDataModule(pl.LightningDataModule):
