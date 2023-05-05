@@ -455,12 +455,12 @@ class FilteredSEN12TP(IterableDataset):
         # https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset
         worker_info = torch.utils.data.get_worker_info()
         if worker_info is None:  # single-process data loading, return the full iterator
-            iter_start = self.start_index
-            iter_end = self.end_index
             # shuffling has to happen here, otherwise, the patches of the underlying dataset could be shuffled twice
             # resulting in duplicate elements returned
             if self.shuffle:
                 random.shuffle(self.ds.patches)
+            iter_start = self.start_index
+            iter_end = self.end_index
         else:  # in a worker process
             # split workload
             per_worker = int(
@@ -471,6 +471,17 @@ class FilteredSEN12TP(IterableDataset):
             worker_id = worker_info.id
             iter_start = self.start_index + worker_id * per_worker
             iter_end = min(iter_start + per_worker, self.end_index)
+            if self.shuffle:
+                random.seed(worker_info.seed)
+
+                head = self.ds.patches[:iter_start]
+                center = self.ds.patches[iter_start:iter_end]
+                tail = self.ds.patches[iter_end:]
+
+                random.shuffle(center)
+
+                self.ds.patches = head + center + tail
+
         return FilteredSEN12TP(
             self.ds,
             cloud_prob_threshold=self.cloud_probability_threshold,

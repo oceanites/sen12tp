@@ -31,6 +31,8 @@ class SEN12TPDataModule(pl.LightningDataModule):
         end_transform=None,
         num_workers: int = 1,
         pin_memory: bool = True,  # pinning the memory can increase the performance
+        shuffle_train: bool = False,
+        drop_last_train: bool = False,
         **kwargs,  # ignore additional keyword arguments
     ):
         super().__init__()
@@ -50,6 +52,8 @@ class SEN12TPDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.end_transform = end_transform
         self.pin_memory = pin_memory
+        self.shuffle_train = shuffle_train
+        self.drop_last_train = drop_last_train
 
     def setup(self, stage: Optional[str] = None):
         sen12tp_kwargs = {
@@ -66,7 +70,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         sen12tp_test_ds = SEN12TP(self.dataset_dir / "test", **sen12tp_kwargs)
         random.shuffle(sen12tp_train_ds.patches)
         random.shuffle(sen12tp_val_ds.patches)
-        self.sen12tp_train = FilteredSEN12TP(sen12tp_train_ds)
+        self.sen12tp_train = FilteredSEN12TP(sen12tp_train_ds, shuffle=self.shuffle_train)
         self.sen12tp_val = FilteredSEN12TP(sen12tp_val_ds)
         self.sen12tp_test = FilteredSEN12TP(sen12tp_test_ds)
 
@@ -76,6 +80,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.num_workers,
             pin_memory=self.pin_memory,
+            drop_last=self.drop_last_train,
         )
 
     def val_dataloader(self):
