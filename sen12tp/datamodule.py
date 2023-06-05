@@ -75,6 +75,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         self.sen12tp_test = FilteredSEN12TP(sen12tp_test_ds)
 
     def train_dataloader(self):
+        assert self.sen12tp_train, ("Run setup() before calling train_dataloader()!")
         return torch.utils.data.DataLoader(
             self.sen12tp_train,
             batch_size=self.batch_size,
@@ -84,6 +85,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         )
 
     def val_dataloader(self):
+        assert self.sen12tp_val, ("Run setup() before calling val_dataloader()!")
         return torch.utils.data.DataLoader(
             self.sen12tp_val,
             batch_size=self.batch_size,
@@ -92,6 +94,7 @@ class SEN12TPDataModule(pl.LightningDataModule):
         )
 
     def test_dataloader(self):
+        assert self.sen12tp_test, ("Run setup() before calling test_dataloader()!")
         return torch.utils.data.DataLoader(
             self.sen12tp_test,
             batch_size=self.batch_size,
