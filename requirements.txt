@@ -2,6 +2,7 @@ numpy
 rasterio
 torch
 pytorch_lightning
+lightning
 xarray
 tqdm
 pytest
