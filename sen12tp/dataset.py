@@ -496,10 +496,18 @@ class FilteredSEN12TP(IterableDataset):
         """
         if self.current_index < self.end_index:
             img = self.ds.get_image_dataarray(self.current_index)
+
             self.current_index += 1
-            cloud_mask = (
-                img.loc[["cloud_probability"]] > self.cloud_probability_threshold
-            )
+
+            # if 'cloud_probability' not in img.band set cloud mask to False
+            # this is the case for non-optical data
+
+            if "cloud_probability" not in img.band:
+                cloud_mask = np.zeros(img.shape[1:], dtype=np.bool)
+            else:
+                cloud_mask = (
+                    img.loc[["cloud_probability"]] > self.cloud_probability_threshold
+                )
 
             # skip patches containing NaN
             if np.any(np.isnan(img)):
