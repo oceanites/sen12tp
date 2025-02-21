@@ -78,26 +78,20 @@ def calculate_normalized_difference_xarray(
 
 
 def calculate_normalized_difference(arr1: np.ndarray, arr2: np.ndarray) -> np.ndarray:
-    """Calculates the Normalized difference from two arrays.
+    """
+    Calculates the Normalized difference from two arrays. Use a small epsilon for numerical
+    stability avoiding division by zero. Also replace all NaN values in the output with 0.
 
-    ndiff = (arr1 - arr2) / (arr1 + arr1)
-    Replaces NaN values with 0.
+    ndiff = (arr1 - arr2) / (arr1 + arr1 + eps)
     """
     assert (
         arr1.shape == arr2.shape
     ), f"Shapes are not equal: {arr1.shape} != {arr2.shape}!"
     assert isinstance(arr1, np.ndarray)
     assert isinstance(arr2, np.ndarray)
+    eps = 1e-8  # for numerical stability
     # calculating the NDVI can raise a warning, when dividing by 0
-    # as the nan values will be replaced with 0, this warning can be thrown away
-    with warnings.catch_warnings(record=True) as w:
-        norm_diff = (arr1 - arr2) / (arr1 + arr2)
-        # test, that really only the correct warning ("RuntimeWarning: invalid
-        # value encountered in true_divide") was catched
-        assert len(w) <= 1, f"There should at most 1 warning, not {len(w)}!"
-        if len(w) == 1:
-            assert issubclass(w[-1].category, RuntimeWarning)
-            assert "invalid value encountered in true_divide" in str(w[-1].message)
+    norm_diff = (arr1 - arr2) / (arr1 + arr2 + eps)
     norm_diff = np.nan_to_num(norm_diff, nan=0)
     return norm_diff
 
